@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
 import type { Ingredient, SafetyLevel } from "@/lib/ingredients";
-import { X, Flag, Lightbulb } from "lucide-react";
+import { X, Flag, Lightbulb, Bookmark, BookmarkCheck } from "lucide-react";
 import CompanionAvatar from "./CompanionAvatar";
+import GuideSwitcher from "./GuideSwitcher";
 import { useState } from "react";
+import { useAppStore } from "@/lib/store";
+import { toast } from "sonner";
 
 const levelLabel: Record<SafetyLevel, { text: string; color: string }> = {
   safe: { text: "Generally Safe", color: "text-safe" },
@@ -19,6 +22,13 @@ const IngredientDetail = ({
 }) => {
   const [reported, setReported] = useState(false);
   const label = levelLabel[ingredient.level];
+  const saveIngredient = useAppStore((s) => s.saveIngredient);
+  const isSaved = useAppStore((s) => s.isIngredientSaved(ingredient.name));
+
+  const handleSave = () => {
+    saveIngredient(ingredient);
+    toast.success("Saved to your ingredient library! 📚");
+  };
 
   return (
     <motion.div
@@ -41,44 +51,87 @@ const IngredientDetail = ({
           <div className="w-10 h-1 rounded-full bg-border" />
         </div>
 
-        {/* Header */}
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <CompanionAvatar size="sm" />
-            <div>
-              <h2 className="font-display font-800 text-lg text-foreground">
-                {ingredient.name}
-              </h2>
-              <p className={`text-xs font-600 ${label.color}`}>{label.text}</p>
-            </div>
+        {/* Character presentation area */}
+        <div className="flex items-start gap-4 mb-5">
+          <div className="shrink-0">
+            <CompanionAvatar size="lg" />
           </div>
-          <button
-            onClick={onClose}
-            className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"
-          >
-            <X className="w-4 h-4 text-muted-foreground" />
-          </button>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between">
+              <div>
+                <h2 className="font-display font-800 text-xl text-foreground">
+                  {ingredient.name}
+                </h2>
+                <p className={`text-xs font-600 ${label.color}`}>{label.text}</p>
+              </div>
+              <button
+                onClick={onClose}
+                className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0"
+              >
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mt-2 bg-lilac-light rounded-2xl rounded-tl-sm p-3"
+            >
+              <p className="text-xs text-muted-foreground font-body">
+                Your guide found something interesting here. 🔍
+              </p>
+            </motion.div>
+          </div>
         </div>
 
         {/* Content sections */}
         <div className="space-y-4">
-          <Section title="What is it? 🤔" content={ingredient.whatIsIt} />
-          <Section title="Why is it used? 🧪" content={ingredient.whyUsed} />
-          <Section title="Health impact 💚" content={ingredient.healthImpact} />
+          <Section title="What is it? 🤔" content={ingredient.whatIsIt} delay={0.1} />
+          <Section title="Why is it used? 🧪" content={ingredient.whyUsed} delay={0.15} />
+          <Section title="Health impact 💚" content={ingredient.healthImpact} delay={0.2} />
 
           {ingredient.funFact && (
-            <div className="bg-accent rounded-xl p-3 flex items-start gap-2">
-              <Lightbulb className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="bg-lilac-light rounded-xl p-3 flex items-start gap-2 border border-lilac/20"
+            >
+              <Lightbulb className="w-4 h-4 text-lilac mt-0.5 shrink-0" />
               <div>
                 <p className="text-xs font-600 text-accent-foreground mb-0.5">Fun fact</p>
                 <p className="text-xs text-muted-foreground">{ingredient.funFact}</p>
               </div>
-            </div>
+            </motion.div>
           )}
         </div>
 
-        {/* Report */}
-        <div className="mt-6 pt-4 border-t border-border">
+        {/* Save & Actions */}
+        <div className="mt-5 flex gap-2">
+          <button
+            onClick={handleSave}
+            disabled={isSaved}
+            className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-3 font-display font-700 text-sm transition-all ${
+              isSaved
+                ? "bg-safe-bg text-safe"
+                : "bg-primary text-primary-foreground elevated-shadow hover:opacity-90"
+            }`}
+          >
+            {isSaved ? (
+              <>
+                <BookmarkCheck className="w-4 h-4" /> Saved
+              </>
+            ) : (
+              <>
+                <Bookmark className="w-4 h-4" /> Save Ingredient
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Guide switch + Report */}
+        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
+          <GuideSwitcher />
           {!reported ? (
             <button
               onClick={() => setReported(true)}
@@ -88,7 +141,7 @@ const IngredientDetail = ({
               Report correction
             </button>
           ) : (
-            <p className="text-xs text-safe">Thanks for the feedback! We'll review it. ✅</p>
+            <p className="text-xs text-safe">Thanks! We'll review it ✅</p>
           )}
         </div>
       </motion.div>
@@ -96,11 +149,15 @@ const IngredientDetail = ({
   );
 };
 
-const Section = ({ title, content }: { title: string; content: string }) => (
-  <div>
+const Section = ({ title, content, delay = 0 }: { title: string; content: string; delay?: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 8 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay }}
+  >
     <h3 className="font-display font-700 text-sm text-foreground mb-1">{title}</h3>
     <p className="text-sm text-muted-foreground leading-relaxed font-body">{content}</p>
-  </div>
+  </motion.div>
 );
 
 export default IngredientDetail;
