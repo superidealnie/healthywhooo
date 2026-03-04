@@ -2,19 +2,23 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAppStore } from "@/lib/store";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Camera, Keyboard, Sparkles } from "lucide-react";
+import { Camera, Keyboard, Sparkles, RotateCcw, BookOpen, Trash2 } from "lucide-react";
 import { sampleIngredients } from "@/lib/ingredients";
 import CompanionAvatar from "@/components/CompanionAvatar";
 import IngredientList from "@/components/IngredientList";
 import IngredientDetail from "@/components/IngredientDetail";
+import GuideSwitcher from "@/components/GuideSwitcher";
 import type { Ingredient } from "@/lib/ingredients";
 
 const Scanner = () => {
   const guide = useAppStore((s) => s.guide);
+  const savedIngredients = useAppStore((s) => s.savedIngredients);
+  const removeIngredient = useAppStore((s) => s.removeIngredient);
   const navigate = useNavigate();
   const [scanning, setScanning] = useState(false);
   const [scanned, setScanned] = useState(false);
   const [selected, setSelected] = useState<Ingredient | null>(null);
+  const [showLibrary, setShowLibrary] = useState(false);
 
   useEffect(() => {
     if (!guide) navigate("/", { replace: true });
@@ -22,10 +26,17 @@ const Scanner = () => {
 
   const startScan = () => {
     setScanning(true);
+    setScanned(false);
+    setShowLibrary(false);
     setTimeout(() => {
       setScanning(false);
       setScanned(true);
     }, 2200);
+  };
+
+  const resetScan = () => {
+    setScanned(false);
+    setScanning(false);
   };
 
   if (!guide) return null;
@@ -38,7 +49,25 @@ const Scanner = () => {
           <h1 className="font-display text-xl font-800 text-foreground">HealthyWhooo</h1>
           <p className="text-xs text-muted-foreground">Your ingredient translator 🔍</p>
         </div>
-        <CompanionAvatar size="sm" />
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setShowLibrary(!showLibrary)}
+            className="relative w-10 h-10 rounded-full bg-lilac-light flex items-center justify-center hover:bg-accent transition-colors"
+          >
+            <BookOpen className="w-4.5 h-4.5 text-lilac" />
+            {savedIngredients.length > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-primary-foreground text-[10px] font-700 rounded-full flex items-center justify-center">
+                {savedIngredients.length}
+              </span>
+            )}
+          </button>
+          <CompanionAvatar size="sm" />
+        </div>
+      </div>
+
+      {/* Guide switcher */}
+      <div className="px-4 mb-2">
+        <GuideSwitcher />
       </div>
 
       {/* Companion speech */}
@@ -46,17 +75,66 @@ const Scanner = () => {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-accent rounded-2xl rounded-tl-sm p-3 relative"
+          className="bg-lilac-light rounded-2xl rounded-tl-sm p-3.5 relative border border-lilac/10"
         >
           <p className="text-sm text-accent-foreground font-body">
-            {!scanned
+            {showLibrary
+              ? savedIngredients.length > 0
+                ? "Here's your ingredient library! 📚 Keep exploring and learning."
+                : "Your library is empty! Save ingredients to learn about them later. 🌱"
+              : !scanned
               ? "Hey! 👋 Upload a photo of ingredients or try our sample list. I'll translate them into human language!"
-              : "We translated your ingredients into human language! ✨ Tap any to learn more."}
+              : "We translated your ingredients into human language! ✨ Tap any ingredient and I'll explain it."}
           </p>
         </motion.div>
       </div>
 
-      {!scanned && !scanning && (
+      {/* Library view */}
+      {showLibrary && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex-1 overflow-y-auto px-4 pb-4"
+        >
+          <h2 className="font-display font-800 text-foreground mb-3 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-lilac" />
+            My Ingredient Library
+          </h2>
+          {savedIngredients.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-4xl mb-3">📚</p>
+              <p className="font-display font-700 text-foreground mb-1">No ingredients saved yet</p>
+              <p className="text-sm text-muted-foreground">Scan a product and save ingredients to build your library!</p>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {savedIngredients.map((ing) => (
+                <motion.div
+                  key={ing.name}
+                  layout
+                  className="bg-card rounded-2xl p-4 card-shadow border border-border flex items-start gap-3"
+                >
+                  <button onClick={() => setSelected(ing)} className="flex-1 text-left min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className={`w-2.5 h-2.5 rounded-full ${ing.level === "safe" ? "bg-safe" : ing.level === "caution" ? "bg-caution" : "bg-danger"}`} />
+                      <span className="font-display font-700 text-foreground text-sm">{ing.name}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground line-clamp-2">{ing.whatIsIt}</p>
+                  </button>
+                  <button
+                    onClick={() => removeIngredient(ing.name)}
+                    className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0 hover:bg-danger-bg transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-muted-foreground" />
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </motion.div>
+      )}
+
+      {!showLibrary && !scanned && !scanning && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -71,7 +149,7 @@ const Scanner = () => {
           </button>
           <button
             onClick={startScan}
-            className="flex items-center justify-center gap-3 bg-card text-foreground font-display font-600 rounded-2xl py-4 card-shadow border border-border hover:border-primary/30 transition-colors"
+            className="flex items-center justify-center gap-3 bg-card text-foreground font-display font-600 rounded-2xl py-4 card-shadow border border-border hover:border-lilac transition-colors"
           >
             <Keyboard className="w-5 h-5" />
             Try Sample List
@@ -79,7 +157,7 @@ const Scanner = () => {
         </motion.div>
       )}
 
-      {scanning && (
+      {!showLibrary && scanning && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -106,7 +184,7 @@ const Scanner = () => {
         </motion.div>
       )}
 
-      {scanned && (
+      {!showLibrary && scanned && (
         <>
           {/* Legend */}
           <div className="px-4 mb-3 flex items-center gap-4 text-xs text-muted-foreground">
@@ -127,13 +205,26 @@ const Scanner = () => {
               onSelect={setSelected}
             />
 
+            {/* Scan another */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={resetScan}
+              className="mt-4 w-full flex items-center justify-center gap-2 bg-lilac-light text-foreground font-display font-700 rounded-2xl py-3.5 border border-lilac/20 hover:border-lilac transition-colors"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Scan Another Product
+            </motion.button>
+
             {/* Coming Soon */}
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
               onClick={() => navigate("/coming-soon")}
-              className="mt-6 w-full bg-card border-2 border-dashed border-primary/30 rounded-2xl p-4 text-center hover:border-primary/50 transition-colors"
+              className="mt-3 w-full bg-card border-2 border-dashed border-primary/30 rounded-2xl p-4 text-center hover:border-primary/50 transition-colors"
             >
               <p className="font-display font-700 text-foreground text-sm">
                 🔮 Coming Soon: Nutrient Scanner

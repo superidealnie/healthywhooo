@@ -48,9 +48,9 @@ const ChooseGuide = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => pick(g.id)}
-            className="bg-card rounded-2xl p-4 card-shadow flex flex-col items-center gap-2 border border-border hover:border-primary/40 transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+            className="bg-card rounded-2xl p-4 card-shadow flex flex-col items-center gap-2 border border-border hover:border-primary/40 transition-all hover:elevated-shadow focus:outline-none focus:ring-2 focus:ring-ring"
           >
-            <div className="w-28 h-28 rounded-xl overflow-hidden bg-muted">
+            <div className="w-28 h-28 rounded-xl overflow-hidden bg-lilac-light">
               <img
                 src={images[g.id]}
                 alt={g.name}
