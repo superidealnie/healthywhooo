@@ -14,6 +14,8 @@ const images: Record<GuideId, string> = {
   timon: timonImg,
 };
 
+const speciesLabel = { human: "👤 Human mode", dog: "🐕 Dog mode", cat: "🐱 Cat mode" };
+
 const ChooseGuide = () => {
   const setGuide = useAppStore((s) => s.setGuide);
   const navigate = useNavigate();
@@ -59,6 +61,9 @@ const ChooseGuide = () => {
             </div>
             <span className="font-display font-700 text-foreground text-lg">{g.name}</span>
             <span className="text-muted-foreground text-sm">{g.desc}</span>
+            <span className="text-[10px] font-display font-600 text-lilac bg-lilac-light px-2 py-0.5 rounded-full">
+              {speciesLabel[g.species]}
+            </span>
           </motion.button>
         ))}
       </div>

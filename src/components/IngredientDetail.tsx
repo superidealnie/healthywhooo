@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import type { Ingredient, SafetyLevel } from "@/lib/ingredients";
-import { X, Flag, Lightbulb, Bookmark, BookmarkCheck } from "lucide-react";
+import { getSpeciesMode } from "@/lib/ingredients";
+import { X, Flag, Lightbulb, Bookmark, BookmarkCheck, Dog, Cat, User } from "lucide-react";
 import CompanionAvatar from "./CompanionAvatar";
 import GuideSwitcher from "./GuideSwitcher";
+import ModeLabel from "./ModeLabel";
 import { useState } from "react";
 import { useAppStore } from "@/lib/store";
 import { toast } from "sonner";
@@ -22,8 +24,10 @@ const IngredientDetail = ({
 }) => {
   const [reported, setReported] = useState(false);
   const label = levelLabel[ingredient.level];
+  const guide = useAppStore((s) => s.guide);
   const saveIngredient = useAppStore((s) => s.saveIngredient);
   const isSaved = useAppStore((s) => s.isIngredientSaved(ingredient.name));
+  const mode = getSpeciesMode(guide);
 
   const handleSave = () => {
     saveIngredient(ingredient);
@@ -62,7 +66,10 @@ const IngredientDetail = ({
                 <h2 className="font-display font-800 text-xl text-foreground">
                   {ingredient.name}
                 </h2>
-                <p className={`text-xs font-600 ${label.color}`}>{label.text}</p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <p className={`text-xs font-600 ${label.color}`}>{label.text}</p>
+                  <ModeLabel />
+                </div>
               </div>
               <button
                 onClick={onClose}
@@ -89,6 +96,30 @@ const IngredientDetail = ({
           <Section title="What is it? 🤔" content={ingredient.whatIsIt} delay={0.1} />
           <Section title="Why is it used? 🧪" content={ingredient.whyUsed} delay={0.15} />
           <Section title="Health impact 💚" content={ingredient.healthImpact} delay={0.2} />
+
+          {/* Pet-specific note */}
+          {ingredient.petNote && mode !== "human" && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.22 }}
+              className={`rounded-xl p-3 flex items-start gap-2 border ${
+                mode === "dog" ? "bg-caution-bg border-caution/20" : "bg-lilac-light border-lilac/20"
+              }`}
+            >
+              {mode === "dog" ? (
+                <Dog className="w-4 h-4 text-caution mt-0.5 shrink-0" />
+              ) : (
+                <Cat className="w-4 h-4 text-lilac mt-0.5 shrink-0" />
+              )}
+              <div>
+                <p className="text-xs font-600 text-accent-foreground mb-0.5">
+                  {mode === "dog" ? "🐕 Dog-specific note" : "🐱 Cat-specific note"}
+                </p>
+                <p className="text-xs text-muted-foreground">{ingredient.petNote}</p>
+              </div>
+            </motion.div>
+          )}
 
           {ingredient.funFact && (
             <motion.div
@@ -118,13 +149,9 @@ const IngredientDetail = ({
             }`}
           >
             {isSaved ? (
-              <>
-                <BookmarkCheck className="w-4 h-4" /> Saved
-              </>
+              <><BookmarkCheck className="w-4 h-4" /> Saved</>
             ) : (
-              <>
-                <Bookmark className="w-4 h-4" /> Save Ingredient
-              </>
+              <><Bookmark className="w-4 h-4" /> Save Ingredient</>
             )}
           </button>
         </div>
