@@ -15,6 +15,7 @@ import type { Ingredient } from "@/lib/ingredients";
 const Scanner = () => {
   const guide = useAppStore((s) => s.guide);
   const savedIngredients = useAppStore((s) => s.savedIngredients);
+  const reportedIngredients = useAppStore((s) => s.reportedIngredients);
   const removeIngredient = useAppStore((s) => s.removeIngredient);
   const navigate = useNavigate();
   const [scanning, setScanning] = useState(false);
