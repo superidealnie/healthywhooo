@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAppStore } from "@/lib/store";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Camera, Sparkles, RotateCcw, BookOpen, Trash2 } from "lucide-react";
+import { Camera, Sparkles, RotateCcw, BookOpen, Trash2, ClipboardList } from "lucide-react";
 import { getSpeciesMode, getIngredientsForMode } from "@/lib/ingredients";
 import CompanionAvatar from "@/components/CompanionAvatar";
 import IngredientList from "@/components/IngredientList";
