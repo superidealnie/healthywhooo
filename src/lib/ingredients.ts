@@ -257,7 +257,13 @@ export function getIngredientsForMode(mode: SpeciesMode): Ingredient[] {
 }
 
 export function findIngredientByName(query: string, mode: SpeciesMode): Ingredient | undefined {
+  // First check the hardcoded sample lists
   const list = getIngredientsForMode(mode);
   const q = query.toLowerCase().trim();
-  return list.find((i) => i.name.toLowerCase().includes(q) || q.includes(i.name.toLowerCase()));
+  const local = list.find((i) => i.name.toLowerCase().includes(q) || q.includes(i.name.toLowerCase()));
+  if (local) return local;
+
+  // Fall back to the master CSV database
+  const { searchDatabase } = require("./ingredientDatabase");
+  return searchDatabase(query, mode);
 }
