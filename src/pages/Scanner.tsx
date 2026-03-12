@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAppStore } from "@/lib/store";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Camera, Sparkles, RotateCcw, BookOpen, Trash2 } from "lucide-react";
+import { Camera, Sparkles, RotateCcw, BookOpen, Trash2, ClipboardList } from "lucide-react";
 import { getSpeciesMode, getIngredientsForMode } from "@/lib/ingredients";
 import CompanionAvatar from "@/components/CompanionAvatar";
 import IngredientList from "@/components/IngredientList";
@@ -15,6 +15,7 @@ import type { Ingredient } from "@/lib/ingredients";
 const Scanner = () => {
   const guide = useAppStore((s) => s.guide);
   const savedIngredients = useAppStore((s) => s.savedIngredients);
+  const reportedIngredients = useAppStore((s) => s.reportedIngredients);
   const removeIngredient = useAppStore((s) => s.removeIngredient);
   const navigate = useNavigate();
   const [scanning, setScanning] = useState(false);
@@ -61,7 +62,18 @@ const Scanner = () => {
             <ModeLabel />
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigate("/reported")}
+            className="relative w-10 h-10 rounded-full bg-caution-bg flex items-center justify-center hover:bg-accent transition-colors"
+          >
+            <ClipboardList className="w-4.5 h-4.5 text-caution" />
+            {reportedIngredients.length > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-caution text-primary-foreground text-[10px] font-700 rounded-full flex items-center justify-center">
+                {reportedIngredients.length}
+              </span>
+            )}
+          </button>
           <button
             onClick={() => setShowLibrary(!showLibrary)}
             className="relative w-10 h-10 rounded-full bg-lilac-light flex items-center justify-center hover:bg-accent transition-colors"

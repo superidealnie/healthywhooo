@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ChooseGuide from "./pages/ChooseGuide";
 import Scanner from "./pages/Scanner";
 import ComingSoon from "./pages/ComingSoon";
+import ReportedIngredients from "./pages/ReportedIngredients";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
           <Route path="/" element={<ChooseGuide />} />
           <Route path="/scanner" element={<Scanner />} />
           <Route path="/coming-soon" element={<ComingSoon />} />
+          <Route path="/reported" element={<ReportedIngredients />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
