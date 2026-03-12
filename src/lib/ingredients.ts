@@ -256,8 +256,13 @@ export function getIngredientsForMode(mode: SpeciesMode): Ingredient[] {
   }
 }
 
+import { searchDatabase, getSuggestions } from "./ingredientDatabase";
+export { searchDatabase, getSuggestions };
+
 export function findIngredientByName(query: string, mode: SpeciesMode): Ingredient | undefined {
   const list = getIngredientsForMode(mode);
   const q = query.toLowerCase().trim();
-  return list.find((i) => i.name.toLowerCase().includes(q) || q.includes(i.name.toLowerCase()));
+  const local = list.find((i) => i.name.toLowerCase().includes(q) || q.includes(i.name.toLowerCase()));
+  if (local) return local;
+  return searchDatabase(query, mode);
 }
