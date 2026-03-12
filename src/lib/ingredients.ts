@@ -256,22 +256,13 @@ export function getIngredientsForMode(mode: SpeciesMode): Ingredient[] {
   }
 }
 
-export { searchDatabase, getSuggestions } from "./ingredientDatabase";
+import { searchDatabase, getSuggestions } from "./ingredientDatabase";
+export { searchDatabase, getSuggestions };
 
 export function findIngredientByName(query: string, mode: SpeciesMode): Ingredient | undefined {
-  // First check the hardcoded sample lists
   const list = getIngredientsForMode(mode);
   const q = query.toLowerCase().trim();
   const local = list.find((i) => i.name.toLowerCase().includes(q) || q.includes(i.name.toLowerCase()));
   if (local) return local;
-
-  // Fall back to the master CSV database
-  const { searchDatabase: search } = await_module();
-  return search(query, mode);
-}
-
-// Lazy re-export workaround — the actual async-free lookup
-import { searchDatabase as _searchDb } from "./ingredientDatabase";
-function await_module() {
-  return { searchDatabase: _searchDb };
+  return searchDatabase(query, mode);
 }
