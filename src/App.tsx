@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ChooseGuide from "./pages/ChooseGuide";
 import Scanner from "./pages/Scanner";
 import ComingSoon from "./pages/ComingSoon";
+import ReportedIngredients from "./pages/ReportedIngredients";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
