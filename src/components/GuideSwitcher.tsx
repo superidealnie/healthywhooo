@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { guides, type GuideId } from "@/lib/ingredients";
+import { trackEvent } from "@/lib/analytics";
 import { useAppStore } from "@/lib/store";
 import ryanImg from "@/assets/ryan.png";
 import anitaImg from "@/assets/anita.jpg";
