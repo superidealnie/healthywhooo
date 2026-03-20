@@ -85,23 +85,28 @@ const getBaseProperties = (): EventProperties => ({
 
 let posthogLoaded = false;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let posthogInstance: any = null;
+
 const loadPostHog = async () => {
   const key = import.meta.env.VITE_POSTHOG_KEY;
   if (!key || posthogLoaded) return;
 
   try {
-    const { default: posthog } = await import("posthog-js");
+    // Dynamic import — only works if posthog-js is installed
+    const mod = await import(/* @vite-ignore */ "posthog-js");
+    const posthog = mod.default || mod;
     posthog.init(key, {
       api_host: import.meta.env.VITE_POSTHOG_HOST || "https://us.i.posthog.com",
-      loaded: () => { posthogLoaded = true; },
-      autocapture: false, // we control events explicitly
+      loaded: () => { posthogLoaded = true; posthogInstance = posthog; },
+      autocapture: false,
       capture_pageview: true,
       capture_pageleave: true,
       persistence: "localStorage",
-      respect_dnt: true, // GDPR: respect Do Not Track
+      respect_dnt: true,
     });
+    posthogInstance = posthog;
   } catch {
-    // PostHog not installed — that's fine, we degrade gracefully
     if (import.meta.env.DEV) {
       console.log("[Analytics] PostHog not installed. Using local logging only.");
     }
