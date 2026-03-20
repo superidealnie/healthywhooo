@@ -30,8 +30,13 @@ const IngredientDetail = ({
   const isSaved = useAppStore((s) => s.isIngredientSaved(ingredient.name));
   const mode = getSpeciesMode(guide);
 
+  useEffect(() => {
+    trackEvent("result_viewed", { ingredient: ingredient.name, level: ingredient.level, mode });
+  }, [ingredient.name]);
+
   const handleSave = () => {
     saveIngredient(ingredient);
+    trackEvent("ingredient_saved", { ingredient: ingredient.name, mode });
     toast.success("Saved to your ingredient library! 📚");
   };
 
