@@ -47,6 +47,7 @@ const Scanner = () => {
   const resetScan = () => {
     setScanned(false);
     setScanning(false);
+    trackEvent("retry_clicked", { mode });
   };
 
   if (!guide) return null;
