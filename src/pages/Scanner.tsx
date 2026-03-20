@@ -35,9 +35,12 @@ const Scanner = () => {
     setScanning(true);
     setScanned(false);
     setShowLibrary(false);
+    trackEvent("scan_started", { mode });
+    const scanStart = Date.now();
     setTimeout(() => {
       setScanning(false);
       setScanned(true);
+      trackEvent("scan_completed", { mode, processing_time_ms: Date.now() - scanStart });
     }, 2200);
   };
 
