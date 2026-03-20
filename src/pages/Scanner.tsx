@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Camera, Sparkles, RotateCcw, BookOpen, Trash2, ClipboardList } from "lucide-react";
 import { getSpeciesMode, getIngredientsForMode } from "@/lib/ingredients";
-import CompanionAvatar from "@/components/CompanionAvatar";
+
 import IngredientList from "@/components/IngredientList";
 import IngredientDetail from "@/components/IngredientDetail";
 import IngredientSearch from "@/components/IngredientSearch";
@@ -85,14 +85,11 @@ const Scanner = () => {
               </span>
             )}
           </button>
-          <CompanionAvatar size="sm" />
+          <GuideSwitcher />
         </div>
       </div>
 
-      {/* Guide switcher */}
-      <div className="px-4 mb-2">
-        <GuideSwitcher />
-      </div>
+
 
       {/* Companion speech */}
       <div className="px-4 mb-4">
