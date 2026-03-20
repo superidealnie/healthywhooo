@@ -85,7 +85,7 @@ const Scanner = () => {
               </span>
             )}
           </button>
-          <CompanionAvatar size="sm" />
+          <GuideSwitcher />
         </div>
       </div>
 
