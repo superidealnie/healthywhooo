@@ -5,6 +5,7 @@ import { useAppStore } from "@/lib/store";
 import { findIngredientByName, getSpeciesMode, getSuggestions } from "@/lib/ingredients";
 import type { Ingredient } from "@/lib/ingredients";
 import ReportIngredientModal from "./ReportIngredientModal";
+import { trackEvent } from "@/lib/analytics";
 
 const IngredientSearch = ({ onResult }: { onResult: (i: Ingredient) => void }) => {
   const [query, setQuery] = useState("");
