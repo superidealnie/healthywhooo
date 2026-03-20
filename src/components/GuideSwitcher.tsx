@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { guides, type GuideId } from "@/lib/ingredients";
+import { trackEvent } from "@/lib/analytics";
 import { useAppStore } from "@/lib/store";
 import ryanImg from "@/assets/ryan.png";
 import anitaImg from "@/assets/anita.jpg";
@@ -87,6 +88,7 @@ const GuideSwitcher = () => {
                       transition={{ delay: 0.05 * i, type: "spring", stiffness: 260, damping: 22 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => {
+                        trackEvent("guide_switched", { from: guide, to: g.id });
                         setGuide(g.id);
                         setOpen(false);
                       }}

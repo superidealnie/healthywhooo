@@ -5,9 +5,10 @@ import { X, Flag, Lightbulb, Bookmark, BookmarkCheck, Dog, Cat, User } from "luc
 import CompanionAvatar from "./CompanionAvatar";
 import GuideSwitcher from "./GuideSwitcher";
 import ModeLabel from "./ModeLabel";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 
 const levelLabel: Record<SafetyLevel, { text: string; color: string }> = {
   safe: { text: "Generally Safe", color: "text-safe" },
@@ -29,8 +30,13 @@ const IngredientDetail = ({
   const isSaved = useAppStore((s) => s.isIngredientSaved(ingredient.name));
   const mode = getSpeciesMode(guide);
 
+  useEffect(() => {
+    trackEvent("result_viewed", { ingredient: ingredient.name, level: ingredient.level, mode });
+  }, [ingredient.name]);
+
   const handleSave = () => {
     saveIngredient(ingredient);
+    trackEvent("ingredient_saved", { ingredient: ingredient.name, mode });
     toast.success("Saved to your ingredient library! 📚");
   };
 

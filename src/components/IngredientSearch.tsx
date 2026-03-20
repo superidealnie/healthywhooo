@@ -5,6 +5,7 @@ import { useAppStore } from "@/lib/store";
 import { findIngredientByName, getSpeciesMode, getSuggestions } from "@/lib/ingredients";
 import type { Ingredient } from "@/lib/ingredients";
 import ReportIngredientModal from "./ReportIngredientModal";
+import { trackEvent } from "@/lib/analytics";
 
 const IngredientSearch = ({ onResult }: { onResult: (i: Ingredient) => void }) => {
   const [query, setQuery] = useState("");
@@ -18,13 +19,16 @@ const IngredientSearch = ({ onResult }: { onResult: (i: Ingredient) => void }) =
 
   const handleSearch = () => {
     if (!query.trim()) return;
+    trackEvent("ingredient_searched", { query: query.trim(), mode });
     const found = findIngredientByName(query, mode);
     if (found) {
+      trackEvent("ingredient_found", { ingredient: found.name, mode });
       onResult(found);
       setQuery("");
       setNotFound(null);
       setShowSuggestions(false);
     } else {
+      trackEvent("ingredient_not_found", { query: query.trim(), mode });
       setNotFound(query.trim());
       setShowSuggestions(false);
     }

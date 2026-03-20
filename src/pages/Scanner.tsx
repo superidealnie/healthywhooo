@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Camera, Sparkles, RotateCcw, BookOpen, Trash2, ClipboardList } from "lucide-react";
 import { getSpeciesMode, getIngredientsForMode } from "@/lib/ingredients";
+import { trackEvent } from "@/lib/analytics";
 
 import IngredientList from "@/components/IngredientList";
 import IngredientDetail from "@/components/IngredientDetail";
@@ -34,15 +35,19 @@ const Scanner = () => {
     setScanning(true);
     setScanned(false);
     setShowLibrary(false);
+    trackEvent("scan_started", { mode });
+    const scanStart = Date.now();
     setTimeout(() => {
       setScanning(false);
       setScanned(true);
+      trackEvent("scan_completed", { mode, processing_time_ms: Date.now() - scanStart });
     }, 2200);
   };
 
   const resetScan = () => {
     setScanned(false);
     setScanning(false);
+    trackEvent("retry_clicked", { mode });
   };
 
   if (!guide) return null;
