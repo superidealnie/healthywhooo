@@ -28,25 +28,25 @@ const GuideSwitcher = () => {
       {/* Clickable avatar with pulse hint */}
       <button
         onClick={() => setOpen(true)}
-        className="relative group"
+        className="relative group flex flex-col items-center gap-1.5 pb-1"
         aria-label="Switch guide"
       >
-        {/* Pulse ring */}
-        <span className="absolute inset-0 rounded-full bg-primary/20 animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite] opacity-40 group-hover:opacity-0" />
-        <motion.div
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.94 }}
-          className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/30 shadow-[0_2px_12px_hsl(var(--primary)/0.25)] bg-card relative z-10"
-        >
-          <img
-            src={images[guide]}
-            alt={guide}
-            className="w-full h-full object-cover object-top"
-          />
-        </motion.div>
-        {/* First-time hint */}
-        <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] font-display font-600 text-muted-foreground opacity-70 pointer-events-none">
-          Tap to switch
+        <div className="relative">
+          <span className="absolute inset-0 rounded-full bg-primary/20 animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite] opacity-40 group-hover:opacity-0" />
+          <motion.div
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.94 }}
+            className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/30 shadow-[0_2px_12px_hsl(var(--primary)/0.25)] bg-card relative z-10"
+          >
+            <img
+              src={images[guide]}
+              alt={guide}
+              className="w-full h-full object-cover object-top"
+            />
+          </motion.div>
+        </div>
+        <span className="whitespace-nowrap text-[10px] font-display font-600 text-muted-foreground/80">
+          Tap to change guide
         </span>
       </button>
 
