@@ -5,9 +5,10 @@ import { X, Flag, Lightbulb, Bookmark, BookmarkCheck, Dog, Cat, User } from "luc
 import CompanionAvatar from "./CompanionAvatar";
 import GuideSwitcher from "./GuideSwitcher";
 import ModeLabel from "./ModeLabel";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAppStore } from "@/lib/store";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 
 const levelLabel: Record<SafetyLevel, { text: string; color: string }> = {
   safe: { text: "Generally Safe", color: "text-safe" },
