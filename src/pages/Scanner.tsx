@@ -89,10 +89,7 @@ const Scanner = () => {
         </div>
       </div>
 
-      {/* Guide switcher */}
-      <div className="px-4 mb-2">
-        <GuideSwitcher />
-      </div>
+
 
       {/* Companion speech */}
       <div className="px-4 mb-4">
