@@ -67,7 +67,7 @@ const Scanner = () => {
             onClick={() => navigate("/reported")}
             className="relative w-10 h-10 rounded-full bg-caution-bg flex items-center justify-center hover:bg-accent transition-colors"
           >
-            <ClipboardList className="w-4.5 h-4.5 text-caution" />
+            <ClipboardList className="w-5 h-5 text-caution" strokeWidth={2} />
             {reportedIngredients.length > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-caution text-primary-foreground text-[10px] font-700 rounded-full flex items-center justify-center">
                 {reportedIngredients.length}
@@ -78,7 +78,7 @@ const Scanner = () => {
             onClick={() => setShowLibrary(!showLibrary)}
             className="relative w-10 h-10 rounded-full bg-lilac-light flex items-center justify-center hover:bg-accent transition-colors"
           >
-            <BookOpen className="w-4.5 h-4.5 text-lilac" />
+            <BookOpen className="w-5 h-5 text-lilac" strokeWidth={2} />
             {savedIngredients.length > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-primary-foreground text-[10px] font-700 rounded-full flex items-center justify-center">
                 {savedIngredients.length}
