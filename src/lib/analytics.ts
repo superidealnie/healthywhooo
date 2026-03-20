@@ -93,9 +93,11 @@ const loadPostHog = async () => {
   if (!key || posthogLoaded) return;
 
   try {
-    // Dynamic import — only works if posthog-js is installed
-    const mod = await import(/* @vite-ignore */ "posthog-js");
-    const posthog = mod.default || mod;
+    // Dynamic import — only loads if posthog-js is installed
+    const pkgName = "posthog-js";
+    const mod = await (Function("p", "return import(p)")(pkgName) as Promise<{ default: unknown }>);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const posthog = (mod.default || mod) as any;
     posthog.init(key, {
       api_host: import.meta.env.VITE_POSTHOG_HOST || "https://us.i.posthog.com",
       loaded: () => { posthogLoaded = true; posthogInstance = posthog; },
