@@ -23,6 +23,7 @@ const ChooseGuide = () => {
 
   const pick = (id: GuideId) => {
     setGuide(id);
+    trackEvent("guide_selected", { guide: id });
     navigate("/scanner");
   };
 

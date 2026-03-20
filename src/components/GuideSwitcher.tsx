@@ -88,6 +88,7 @@ const GuideSwitcher = () => {
                       transition={{ delay: 0.05 * i, type: "spring", stiffness: 260, damping: 22 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => {
+                        trackEvent("guide_switched", { from: guide, to: g.id });
                         setGuide(g.id);
                         setOpen(false);
                       }}
