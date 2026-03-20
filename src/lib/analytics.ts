@@ -133,12 +133,9 @@ export const trackEvent = async (
   }
 
   // Forward to PostHog if available
-  if (import.meta.env.VITE_POSTHOG_KEY) {
+  if (posthogLoaded && posthogInstance) {
     try {
-      const { default: posthog } = await import("posthog-js");
-      if (posthogLoaded) {
-        posthog.capture(event, merged);
-      }
+      posthogInstance.capture(event, merged);
     } catch {
       // silently degrade
     }
