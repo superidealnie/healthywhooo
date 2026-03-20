@@ -4,6 +4,7 @@ import anitaImg from "@/assets/anita.jpg";
 import pedroImg from "@/assets/pedro.jpg";
 import timonImg from "@/assets/timon.jpg";
 import { guides, type GuideId } from "@/lib/ingredients";
+import { trackEvent } from "@/lib/analytics";
 import { useAppStore } from "@/lib/store";
 import { useNavigate } from "react-router-dom";
 
