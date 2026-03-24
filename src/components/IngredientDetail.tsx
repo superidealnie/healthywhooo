@@ -72,7 +72,7 @@ const IngredientDetail = ({
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="font-display font-800 text-xl text-foreground">
-                  {ingredient.name}
+                  {displayIngredient.name}
                 </h2>
                 <div className="flex items-center gap-2 mt-0.5">
                   <p className={`text-xs font-600 ${label.color}`}>{label.text}</p>
