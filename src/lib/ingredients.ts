@@ -3,6 +3,7 @@ export type SpeciesMode = "human" | "dog" | "cat";
 
 export interface Ingredient {
   name: string;
+  ingredientKey?: string;
   level: SafetyLevel;
   whatIsIt: string;
   whyUsed: string;
