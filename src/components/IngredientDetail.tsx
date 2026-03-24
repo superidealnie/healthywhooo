@@ -33,8 +33,8 @@ const IngredientDetail = ({
   const label = levelLabel[displayIngredient.level];
 
   useEffect(() => {
-    trackEvent("result_viewed", { ingredient: ingredient.name, level: ingredient.level, mode });
-  }, [ingredient.name]);
+    trackEvent("result_viewed", { ingredient: displayIngredient.name, level: displayIngredient.level, mode });
+  }, [displayIngredient.name, displayIngredient.level, mode]);
 
   const handleSave = () => {
     saveIngredient(ingredient);
