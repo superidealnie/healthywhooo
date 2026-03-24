@@ -1,5 +1,6 @@
 import csvRaw from "../../data/ingredients_master.csv?raw";
 import type { SafetyLevel, SpeciesMode, Ingredient } from "./ingredients";
+import { enrichWithProfile } from "./ingredientProfiles";
 
 export interface DbIngredient {
   key: string;
