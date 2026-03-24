@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import type { Ingredient, SafetyLevel } from "@/lib/ingredients";
 import { getSpeciesMode } from "@/lib/ingredients";
+import { getIngredientDisplayData } from "@/lib/ingredientProfiles";
 import { X, Flag, Lightbulb, Bookmark, BookmarkCheck, Dog, Cat, User } from "lucide-react";
 import CompanionAvatar from "./CompanionAvatar";
 import GuideSwitcher from "./GuideSwitcher";
