@@ -112,7 +112,7 @@ export function searchDatabase(query: string, mode: SpeciesMode): Ingredient | u
     return row.aliases.some((a) => a.includes(q) || q.includes(a));
   });
 
-  return partial ? toIngredient(partial) : undefined;
+  return partial ? toIngredient(partial, mode) : undefined;
 }
 
 /**
