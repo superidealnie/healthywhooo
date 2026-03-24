@@ -71,9 +71,9 @@ function getDb(): DbIngredient[] {
   return _db;
 }
 
-/** Convert a DB row into the app's Ingredient shape */
-function toIngredient(row: DbIngredient): Ingredient {
-  return {
+/** Convert a DB row into the app's Ingredient shape, enriched with profile data */
+function toIngredient(row: DbIngredient, mode: SpeciesMode = "human"): Ingredient {
+  const base: Ingredient = {
     name: row.nameEn,
     level: row.level,
     whatIsIt: row.whatIsIt,
@@ -81,6 +81,7 @@ function toIngredient(row: DbIngredient): Ingredient {
     healthImpact: row.healthImpact,
     funFact: row.funFact || undefined,
   };
+  return enrichWithProfile(base, row.key, mode);
 }
 
 /**
