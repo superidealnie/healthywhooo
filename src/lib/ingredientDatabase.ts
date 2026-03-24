@@ -1,6 +1,5 @@
 import csvRaw from "../../data/ingredients_master.csv?raw";
 import type { SafetyLevel, SpeciesMode, Ingredient } from "./ingredients";
-import { enrichWithProfile } from "./ingredientProfiles";
 
 export interface DbIngredient {
   key: string;
@@ -71,9 +70,9 @@ function getDb(): DbIngredient[] {
   return _db;
 }
 
-/** Convert a DB row into the app's Ingredient shape, enriched with profile data */
+/** Convert a DB row into the app's Ingredient shape */
 function toIngredient(row: DbIngredient, mode: SpeciesMode = "human"): Ingredient {
-  const base: Ingredient = {
+  return {
     name: row.nameEn,
     level: row.level,
     whatIsIt: row.whatIsIt,
@@ -81,7 +80,6 @@ function toIngredient(row: DbIngredient, mode: SpeciesMode = "human"): Ingredien
     healthImpact: row.healthImpact,
     funFact: row.funFact || undefined,
   };
-  return enrichWithProfile(base, row.key, mode);
 }
 
 /**
