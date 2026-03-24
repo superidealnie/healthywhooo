@@ -129,7 +129,7 @@ const IngredientDetail = ({
             </motion.div>
           )}
 
-          {ingredient.funFact && (
+          {displayIngredient.funFact && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -139,7 +139,7 @@ const IngredientDetail = ({
               <Lightbulb className="w-4 h-4 text-lilac mt-0.5 shrink-0" />
               <div>
                 <p className="text-xs font-600 text-accent-foreground mb-0.5">Fun fact</p>
-                <p className="text-xs text-muted-foreground">{ingredient.funFact}</p>
+                <p className="text-xs text-muted-foreground">{displayIngredient.funFact}</p>
               </div>
             </motion.div>
           )}
