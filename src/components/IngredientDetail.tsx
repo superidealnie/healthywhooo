@@ -101,9 +101,9 @@ const IngredientDetail = ({
 
         {/* Content sections */}
         <div className="space-y-4">
-          <Section title="What is it? 🤔" content={ingredient.whatIsIt} delay={0.1} />
-          <Section title="Why is it used? 🧪" content={ingredient.whyUsed} delay={0.15} />
-          <Section title="Health impact 💚" content={ingredient.healthImpact} delay={0.2} />
+          <Section title="What is it? 🤔" content={displayIngredient.whatIsIt} delay={0.1} />
+          <Section title="Why is it used? 🧪" content={displayIngredient.whyUsed} delay={0.15} />
+          <Section title="Health impact 💚" content={displayIngredient.healthImpact} delay={0.2} />
 
           {/* Pet-specific note */}
           {ingredient.petNote && mode !== "human" && (
