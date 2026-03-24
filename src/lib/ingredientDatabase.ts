@@ -1,5 +1,6 @@
 import csvRaw from "../../data/ingredients_master.csv?raw";
 import type { SafetyLevel, SpeciesMode, Ingredient } from "./ingredients";
+import { enrichWithProfile } from "./ingredientProfiles";
 
 export interface DbIngredient {
   key: string;
@@ -70,9 +71,9 @@ function getDb(): DbIngredient[] {
   return _db;
 }
 
-/** Convert a DB row into the app's Ingredient shape */
-function toIngredient(row: DbIngredient): Ingredient {
-  return {
+/** Convert a DB row into the app's Ingredient shape, enriched with profile data */
+function toIngredient(row: DbIngredient, mode: SpeciesMode = "human"): Ingredient {
+  const base: Ingredient = {
     name: row.nameEn,
     level: row.level,
     whatIsIt: row.whatIsIt,
@@ -80,6 +81,7 @@ function toIngredient(row: DbIngredient): Ingredient {
     healthImpact: row.healthImpact,
     funFact: row.funFact || undefined,
   };
+  return enrichWithProfile(base, row.key, mode);
 }
 
 /**
@@ -101,7 +103,7 @@ export function searchDatabase(query: string, mode: SpeciesMode): Ingredient | u
     return false;
   });
 
-  if (match) return toIngredient(match);
+  if (match) return toIngredient(match, mode);
 
   // partial match fallback
   const partial = db.find((row) => {
@@ -110,7 +112,7 @@ export function searchDatabase(query: string, mode: SpeciesMode): Ingredient | u
     return row.aliases.some((a) => a.includes(q) || q.includes(a));
   });
 
-  return partial ? toIngredient(partial) : undefined;
+  return partial ? toIngredient(partial, mode) : undefined;
 }
 
 /**
@@ -129,7 +131,7 @@ export function getSuggestions(query: string, mode: SpeciesMode, limit = 6): Ing
       row.nameEn.toLowerCase().includes(q) ||
       row.aliases.some((a) => a.includes(q))
     ) {
-      results.push(toIngredient(row));
+      results.push(toIngredient(row, mode));
     }
   }
   return results;
