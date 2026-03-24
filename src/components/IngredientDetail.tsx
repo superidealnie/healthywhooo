@@ -25,11 +25,12 @@ const IngredientDetail = ({
   onClose: () => void;
 }) => {
   const [reported, setReported] = useState(false);
-  const label = levelLabel[ingredient.level];
   const guide = useAppStore((s) => s.guide);
   const saveIngredient = useAppStore((s) => s.saveIngredient);
   const isSaved = useAppStore((s) => s.isIngredientSaved(ingredient.name));
   const mode = getSpeciesMode(guide);
+  const displayIngredient = getIngredientDisplayData(ingredient, mode);
+  const label = levelLabel[displayIngredient.level];
 
   useEffect(() => {
     trackEvent("result_viewed", { ingredient: ingredient.name, level: ingredient.level, mode });
