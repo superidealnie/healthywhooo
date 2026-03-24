@@ -124,7 +124,7 @@ const IngredientDetail = ({
                 <p className="text-xs font-600 text-accent-foreground mb-0.5">
                   {mode === "dog" ? "🐕 Dog-specific note" : "🐱 Cat-specific note"}
                 </p>
-                <p className="text-xs text-muted-foreground">{ingredient.petNote}</p>
+                <p className="text-xs text-muted-foreground">{displayIngredient.petNote}</p>
               </div>
             </motion.div>
           )}
