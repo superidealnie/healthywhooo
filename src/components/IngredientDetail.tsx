@@ -106,7 +106,7 @@ const IngredientDetail = ({
           <Section title="Health impact 💚" content={displayIngredient.healthImpact} delay={0.2} />
 
           {/* Pet-specific note */}
-          {ingredient.petNote && mode !== "human" && (
+          {displayIngredient.petNote && mode !== "human" && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
