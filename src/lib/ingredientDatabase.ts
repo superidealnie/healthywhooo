@@ -131,7 +131,7 @@ export function getSuggestions(query: string, mode: SpeciesMode, limit = 6): Ing
       row.nameEn.toLowerCase().includes(q) ||
       row.aliases.some((a) => a.includes(q))
     ) {
-      results.push(toIngredient(row));
+      results.push(toIngredient(row, mode));
     }
   }
   return results;
