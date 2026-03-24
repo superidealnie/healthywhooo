@@ -3,6 +3,7 @@ export type SpeciesMode = "human" | "dog" | "cat";
 
 export interface Ingredient {
   name: string;
+  ingredientKey?: string;
   level: SafetyLevel;
   whatIsIt: string;
   whyUsed: string;
@@ -256,13 +257,23 @@ export function getIngredientsForMode(mode: SpeciesMode): Ingredient[] {
   }
 }
 
-import { searchDatabase, getSuggestions } from "./ingredientDatabase";
-export { searchDatabase, getSuggestions };
+import {
+  searchDatabase as searchIngredientDatabase,
+  getSuggestions as getDatabaseSuggestions,
+} from "./ingredientDatabase";
+
+export function searchDatabase(query: string): Ingredient | undefined {
+  return searchIngredientDatabase(query);
+}
+
+export function getSuggestions(query: string, _mode: SpeciesMode, limit = 6): Ingredient[] {
+  return getDatabaseSuggestions(query, limit);
+}
 
 export function findIngredientByName(query: string, mode: SpeciesMode): Ingredient | undefined {
   const list = getIngredientsForMode(mode);
   const q = query.toLowerCase().trim();
   const local = list.find((i) => i.name.toLowerCase().includes(q) || q.includes(i.name.toLowerCase()));
   if (local) return local;
-  return searchDatabase(query, mode);
+  return searchDatabase(query);
 }

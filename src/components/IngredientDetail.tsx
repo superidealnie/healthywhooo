@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import type { Ingredient, SafetyLevel } from "@/lib/ingredients";
 import { getSpeciesMode } from "@/lib/ingredients";
+import { getIngredientDisplayData } from "@/lib/ingredientProfiles";
 import { X, Flag, Lightbulb, Bookmark, BookmarkCheck, Dog, Cat, User } from "lucide-react";
 import CompanionAvatar from "./CompanionAvatar";
 import GuideSwitcher from "./GuideSwitcher";
@@ -24,15 +25,16 @@ const IngredientDetail = ({
   onClose: () => void;
 }) => {
   const [reported, setReported] = useState(false);
-  const label = levelLabel[ingredient.level];
   const guide = useAppStore((s) => s.guide);
   const saveIngredient = useAppStore((s) => s.saveIngredient);
   const isSaved = useAppStore((s) => s.isIngredientSaved(ingredient.name));
   const mode = getSpeciesMode(guide);
+  const displayIngredient = getIngredientDisplayData(ingredient, mode);
+  const label = levelLabel[displayIngredient.level];
 
   useEffect(() => {
-    trackEvent("result_viewed", { ingredient: ingredient.name, level: ingredient.level, mode });
-  }, [ingredient.name]);
+    trackEvent("result_viewed", { ingredient: displayIngredient.name, level: displayIngredient.level, mode });
+  }, [displayIngredient.name, displayIngredient.level, mode]);
 
   const handleSave = () => {
     saveIngredient(ingredient);
@@ -70,7 +72,7 @@ const IngredientDetail = ({
             <div className="flex items-start justify-between">
               <div>
                 <h2 className="font-display font-800 text-xl text-foreground">
-                  {ingredient.name}
+                  {displayIngredient.name}
                 </h2>
                 <div className="flex items-center gap-2 mt-0.5">
                   <p className={`text-xs font-600 ${label.color}`}>{label.text}</p>
@@ -99,12 +101,12 @@ const IngredientDetail = ({
 
         {/* Content sections */}
         <div className="space-y-4">
-          <Section title="What is it? 🤔" content={ingredient.whatIsIt} delay={0.1} />
-          <Section title="Why is it used? 🧪" content={ingredient.whyUsed} delay={0.15} />
-          <Section title="Health impact 💚" content={ingredient.healthImpact} delay={0.2} />
+          <Section title="What is it? 🤔" content={displayIngredient.whatIsIt} delay={0.1} />
+          <Section title="Why is it used? 🧪" content={displayIngredient.whyUsed} delay={0.15} />
+          <Section title="Health impact 💚" content={displayIngredient.healthImpact} delay={0.2} />
 
           {/* Pet-specific note */}
-          {ingredient.petNote && mode !== "human" && (
+          {displayIngredient.petNote && mode !== "human" && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -122,12 +124,12 @@ const IngredientDetail = ({
                 <p className="text-xs font-600 text-accent-foreground mb-0.5">
                   {mode === "dog" ? "🐕 Dog-specific note" : "🐱 Cat-specific note"}
                 </p>
-                <p className="text-xs text-muted-foreground">{ingredient.petNote}</p>
+                <p className="text-xs text-muted-foreground">{displayIngredient.petNote}</p>
               </div>
             </motion.div>
           )}
 
-          {ingredient.funFact && (
+          {displayIngredient.funFact && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
@@ -137,7 +139,7 @@ const IngredientDetail = ({
               <Lightbulb className="w-4 h-4 text-lilac mt-0.5 shrink-0" />
               <div>
                 <p className="text-xs font-600 text-accent-foreground mb-0.5">Fun fact</p>
-                <p className="text-xs text-muted-foreground">{ingredient.funFact}</p>
+                <p className="text-xs text-muted-foreground">{displayIngredient.funFact}</p>
               </div>
             </motion.div>
           )}
