@@ -1,0 +1,62 @@
+[
+  {
+    "ingredient_key": "lecithins",
+    "what_is_it": "A group of ingredients that help oil and water stay mixed instead of separating.",
+    "why_used": "They make food smoother, creamier, and more stable.",
+    "fun_fact": "Lecithins are often used in chocolate, spreads, and creamy sauces.",
+    "risk_label_human": "caution",
+    "health_impact_human": "Usually fine in small amounts, but they still signal a more processed product.",
+    "risk_label_dog": "safe",
+    "health_impact_dog": "Usually okay for dogs in small amounts and commonly used to keep texture smooth.",
+    "risk_label_cat": "safe",
+    "health_impact_cat": "Usually okay for cats in small amounts and mainly used for texture, not nutrition."
+  },
+  {
+    "ingredient_key": "oat_lecithin",
+    "what_is_it": "A plant-based emulsifier made from oats that helps different ingredients blend together.",
+    "why_used": "It keeps products smooth and helps fat and water mix more evenly.",
+    "fun_fact": "It is often seen as a plant-based alternative to soy lecithin.",
+    "risk_label_human": "caution",
+    "health_impact_human": "Generally low concern for people, but it is still part of processed food.",
+    "risk_label_dog": "safe",
+    "health_impact_dog": "Usually okay for dogs in small amounts and mostly used to improve texture.",
+    "risk_label_cat": "safe",
+    "health_impact_cat": "Usually okay for cats in small amounts and mainly helps keep food evenly mixed."
+  },
+  {
+    "ingredient_key": "citric_acid",
+    "what_is_it": "A sour ingredient found naturally in citrus fruits and also made for food use.",
+    "why_used": "It adds a tangy taste and helps keep food fresh for longer.",
+    "fun_fact": "It is one of the most common additives in drinks, sweets, and sauces.",
+    "risk_label_human": "safe",
+    "health_impact_human": "Generally considered safe for most people and widely used in everyday foods.",
+    "risk_label_dog": "safe",
+    "health_impact_dog": "Usually safe for dogs in small food amounts, though very sour products may upset sensitive stomachs.",
+    "risk_label_cat": "safe",
+    "health_impact_cat": "Usually safe for cats in small food amounts, but it is not something they need in large amounts."
+  },
+  {
+    "ingredient_key": "carrageenan",
+    "what_is_it": "A thickener from red seaweed that helps food stay smooth and creamy.",
+    "why_used": "It improves texture and stops ingredients from separating.",
+    "fun_fact": "Seaweed-based thickeners have been used in cooking for a very long time.",
+    "risk_label_human": "caution",
+    "health_impact_human": "Some people are okay with it, but others prefer to limit it because it is debated in digestion-related discussions.",
+    "risk_label_dog": "caution",
+    "health_impact_dog": "Often used in pet food and usually tolerated, but some dogs with sensitive stomachs may do better with less of it.",
+    "risk_label_cat": "caution",
+    "health_impact_cat": "Often used in pet food, but some cats with sensitive digestion may not tolerate it well."
+  },
+  {
+    "ingredient_key": "guar_gum",
+    "what_is_it": "A thickener made from guar beans that helps food feel smooth and evenly mixed.",
+    "why_used": "It improves texture and helps sauces, desserts, and spreads stay consistent.",
+    "fun_fact": "Even a small amount can make a product feel much thicker.",
+    "risk_label_human": "caution",
+    "health_impact_human": "Usually tolerated well, but many people prefer fewer gums in highly processed foods.",
+    "risk_label_dog": "safe",
+    "health_impact_dog": "Usually okay for dogs in small amounts and commonly used to help texture.",
+    "risk_label_cat": "safe",
+    "health_impact_cat": "Usually okay for cats in small amounts, though too much may be harder on sensitive digestion."
+  }
+]
