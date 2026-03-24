@@ -103,7 +103,7 @@ export function searchDatabase(query: string, mode: SpeciesMode): Ingredient | u
     return false;
   });
 
-  if (match) return toIngredient(match);
+  if (match) return toIngredient(match, mode);
 
   // partial match fallback
   const partial = db.find((row) => {
