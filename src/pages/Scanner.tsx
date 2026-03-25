@@ -1,10 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppStore } from "@/lib/store";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Camera, Sparkles, RotateCcw, BookOpen, Trash2, ClipboardList } from "lucide-react";
-import { getSpeciesMode, getIngredientsForMode } from "@/lib/ingredients";
+import { useEffect, useState, useRef } from "react";
+import { Camera, Sparkles, RotateCcw, BookOpen, Trash2, ClipboardList, ImagePlus } from "lucide-react";
+import { getSpeciesMode, getIngredientsForMode, findIngredientByName } from "@/lib/ingredients";
 import { trackEvent } from "@/lib/analytics";
+import { extractTextFromImage } from "@/utils/ocr";
+import { normalizeOcrText, splitIngredients } from "@/utils/ingredientParser";
 
 import IngredientList from "@/components/IngredientList";
 import IngredientDetail from "@/components/IngredientDetail";
