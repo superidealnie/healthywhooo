@@ -25,6 +25,11 @@ const Scanner = () => {
   const [scanned, setScanned] = useState(false);
   const [selected, setSelected] = useState<Ingredient | null>(null);
   const [showLibrary, setShowLibrary] = useState(false);
+  const [ocrProcessing, setOcrProcessing] = useState(false);
+  const [ocrError, setOcrError] = useState<string | null>(null);
+  const [ocrResults, setOcrResults] = useState<Ingredient[] | null>(null);
+  const [unrecognizedItems, setUnrecognizedItems] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const mode = getSpeciesMode(guide);
   const sampleIngredients = getIngredientsForMode(mode);
