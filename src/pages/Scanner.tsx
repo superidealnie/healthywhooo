@@ -206,17 +206,27 @@ const Scanner = () => {
       )}
 
       {/* Pre-scan: search + buttons */}
-      {!showLibrary && !scanned && !scanning && (
+      {!showLibrary && !scanned && !scanning && !ocrProcessing && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-4 flex flex-col gap-3">
           <IngredientSearch onResult={setSelected} />
 
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageUpload}
+          />
           <button
-            onClick={startScan}
+            onClick={() => fileInputRef.current?.click()}
             className="flex items-center justify-center gap-3 bg-primary text-primary-foreground font-display font-700 rounded-2xl py-4 elevated-shadow hover:opacity-90 transition-opacity"
           >
-            <Camera className="w-5 h-5" />
-            {scanLabel}
+            <ImagePlus className="w-5 h-5" />
+            Upload Label Photo
           </button>
+          {ocrError && (
+            <p className="text-sm text-destructive text-center">{ocrError}</p>
+          )}
           <button
             onClick={startScan}
             className="flex items-center justify-center gap-3 bg-card text-foreground font-display font-600 rounded-2xl py-4 card-shadow border border-border hover:border-lilac transition-colors"
@@ -224,6 +234,20 @@ const Scanner = () => {
             <Sparkles className="w-5 h-5 text-primary" />
             {sampleLabel}
           </button>
+        </motion.div>
+      )}
+
+      {/* OCR processing state */}
+      {!showLibrary && ocrProcessing && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col items-center justify-center gap-4 px-4">
+          <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}>
+            <ImagePlus className="w-10 h-10 text-primary" />
+          </motion.div>
+          <p className="font-display font-700 text-foreground">Scanning image...</p>
+          <p className="text-sm text-muted-foreground text-center">Reading the label with OCR magic 📸</p>
+          <div className="w-48 h-2 bg-muted rounded-full overflow-hidden">
+            <motion.div initial={{ width: "0%" }} animate={{ width: "90%" }} transition={{ duration: 8, ease: "easeOut" }} className="h-full bg-primary rounded-full" />
+          </div>
         </motion.div>
       )}
 
