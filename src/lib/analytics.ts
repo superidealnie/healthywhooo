@@ -30,7 +30,10 @@ export type AnalyticsEvent =
   | "retry_clicked"
   | "coming_soon_viewed"
   | "library_opened"
-  | "reported_list_viewed";
+  | "reported_list_viewed"
+  | "ocr_upload_started"
+  | "ocr_upload_completed"
+  | "ocr_upload_failed";
 
 export interface EventProperties {
   [key: string]: string | number | boolean | undefined;
