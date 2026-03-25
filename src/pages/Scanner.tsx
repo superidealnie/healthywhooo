@@ -54,7 +54,48 @@ const Scanner = () => {
   const resetScan = () => {
     setScanned(false);
     setScanning(false);
+    setOcrResults(null);
+    setOcrError(null);
+    setUnrecognizedItems([]);
     trackEvent("retry_clicked", { mode });
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setOcrProcessing(true);
+    setOcrError(null);
+    setShowLibrary(false);
+    trackEvent("ocr_upload_started", { mode });
+    try {
+      const rawText = await extractTextFromImage(file);
+      const normalized = normalizeOcrText(rawText);
+      const parsed = splitIngredients(normalized);
+      console.log("[OCR] Parsed ingredients:", parsed);
+
+      const matched: Ingredient[] = [];
+      const unmatched: string[] = [];
+      for (const item of parsed) {
+        const found = findIngredientByName(item, mode);
+        if (found) {
+          matched.push(found);
+        } else {
+          unmatched.push(item);
+        }
+      }
+      console.log("[OCR] Matched:", matched.length, "Unmatched:", unmatched.length);
+      setOcrResults(matched);
+      setUnrecognizedItems(unmatched);
+      setScanned(true);
+      trackEvent("ocr_upload_completed", { mode, matched: matched.length, unmatched: unmatched.length });
+    } catch (err) {
+      console.error("[OCR] Failed:", err);
+      setOcrError("Could not read image. Try again.");
+      trackEvent("ocr_upload_failed", { mode });
+    } finally {
+      setOcrProcessing(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   };
 
   if (!guide) return null;
