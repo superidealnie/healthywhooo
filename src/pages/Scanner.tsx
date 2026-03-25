@@ -1,10 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppStore } from "@/lib/store";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Camera, Sparkles, RotateCcw, BookOpen, Trash2, ClipboardList } from "lucide-react";
-import { getSpeciesMode, getIngredientsForMode } from "@/lib/ingredients";
+import { useEffect, useState, useRef } from "react";
+import { Camera, Sparkles, RotateCcw, BookOpen, Trash2, ClipboardList, ImagePlus } from "lucide-react";
+import { getSpeciesMode, getIngredientsForMode, findIngredientByName } from "@/lib/ingredients";
 import { trackEvent } from "@/lib/analytics";
+import { extractTextFromImage } from "@/utils/ocr";
+import { normalizeOcrText, splitIngredients } from "@/utils/ingredientParser";
 
 import IngredientList from "@/components/IngredientList";
 import IngredientDetail from "@/components/IngredientDetail";
@@ -23,6 +25,11 @@ const Scanner = () => {
   const [scanned, setScanned] = useState(false);
   const [selected, setSelected] = useState<Ingredient | null>(null);
   const [showLibrary, setShowLibrary] = useState(false);
+  const [ocrProcessing, setOcrProcessing] = useState(false);
+  const [ocrError, setOcrError] = useState<string | null>(null);
+  const [ocrResults, setOcrResults] = useState<Ingredient[] | null>(null);
+  const [unrecognizedItems, setUnrecognizedItems] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const mode = getSpeciesMode(guide);
   const sampleIngredients = getIngredientsForMode(mode);
@@ -47,7 +54,48 @@ const Scanner = () => {
   const resetScan = () => {
     setScanned(false);
     setScanning(false);
+    setOcrResults(null);
+    setOcrError(null);
+    setUnrecognizedItems([]);
     trackEvent("retry_clicked", { mode });
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setOcrProcessing(true);
+    setOcrError(null);
+    setShowLibrary(false);
+    trackEvent("ocr_upload_started", { mode });
+    try {
+      const rawText = await extractTextFromImage(file);
+      const normalized = normalizeOcrText(rawText);
+      const parsed = splitIngredients(normalized);
+      console.log("[OCR] Parsed ingredients:", parsed);
+
+      const matched: Ingredient[] = [];
+      const unmatched: string[] = [];
+      for (const item of parsed) {
+        const found = findIngredientByName(item, mode);
+        if (found) {
+          matched.push(found);
+        } else {
+          unmatched.push(item);
+        }
+      }
+      console.log("[OCR] Matched:", matched.length, "Unmatched:", unmatched.length);
+      setOcrResults(matched);
+      setUnrecognizedItems(unmatched);
+      setScanned(true);
+      trackEvent("ocr_upload_completed", { mode, matched: matched.length, unmatched: unmatched.length });
+    } catch (err) {
+      console.error("[OCR] Failed:", err);
+      setOcrError("Could not read image. Try again.");
+      trackEvent("ocr_upload_failed", { mode });
+    } finally {
+      setOcrProcessing(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
   };
 
   if (!guide) return null;
@@ -158,17 +206,27 @@ const Scanner = () => {
       )}
 
       {/* Pre-scan: search + buttons */}
-      {!showLibrary && !scanned && !scanning && (
+      {!showLibrary && !scanned && !scanning && !ocrProcessing && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-4 flex flex-col gap-3">
           <IngredientSearch onResult={setSelected} />
 
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleImageUpload}
+          />
           <button
-            onClick={startScan}
+            onClick={() => fileInputRef.current?.click()}
             className="flex items-center justify-center gap-3 bg-primary text-primary-foreground font-display font-700 rounded-2xl py-4 elevated-shadow hover:opacity-90 transition-opacity"
           >
-            <Camera className="w-5 h-5" />
-            {scanLabel}
+            <ImagePlus className="w-5 h-5" />
+            Upload Label Photo
           </button>
+          {ocrError && (
+            <p className="text-sm text-destructive text-center">{ocrError}</p>
+          )}
           <button
             onClick={startScan}
             className="flex items-center justify-center gap-3 bg-card text-foreground font-display font-600 rounded-2xl py-4 card-shadow border border-border hover:border-lilac transition-colors"
@@ -176,6 +234,20 @@ const Scanner = () => {
             <Sparkles className="w-5 h-5 text-primary" />
             {sampleLabel}
           </button>
+        </motion.div>
+      )}
+
+      {/* OCR processing state */}
+      {!showLibrary && ocrProcessing && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col items-center justify-center gap-4 px-4">
+          <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}>
+            <ImagePlus className="w-10 h-10 text-primary" />
+          </motion.div>
+          <p className="font-display font-700 text-foreground">Scanning image...</p>
+          <p className="text-sm text-muted-foreground text-center">Reading the label with OCR magic 📸</p>
+          <div className="w-48 h-2 bg-muted rounded-full overflow-hidden">
+            <motion.div initial={{ width: "0%" }} animate={{ width: "90%" }} transition={{ duration: 8, ease: "easeOut" }} className="h-full bg-primary rounded-full" />
+          </div>
         </motion.div>
       )}
 
@@ -205,7 +277,18 @@ const Scanner = () => {
           </div>
 
           <div className="flex-1 overflow-y-auto px-4 pb-4">
-            <IngredientList ingredients={sampleIngredients} onSelect={setSelected} />
+            <IngredientList ingredients={ocrResults ?? sampleIngredients} onSelect={setSelected} />
+
+            {unrecognizedItems.length > 0 && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-3 bg-muted rounded-2xl p-4 border border-border">
+                <p className="font-display font-700 text-foreground text-sm mb-2">🔍 Not recognized ({unrecognizedItems.length})</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {unrecognizedItems.map((item, i) => (
+                    <span key={i} className="text-xs bg-background text-muted-foreground px-2.5 py-1 rounded-full border border-border">{item}</span>
+                  ))}
+                </div>
+              </motion.div>
+            )}
 
             <motion.button
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
