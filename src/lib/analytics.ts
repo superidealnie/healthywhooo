@@ -33,7 +33,8 @@ export type AnalyticsEvent =
   | "reported_list_viewed"
   | "ocr_upload_started"
   | "ocr_upload_completed"
-  | "ocr_upload_failed";
+  | "ocr_upload_failed"
+  | "intro_cta_clicked";
 
 export interface EventProperties {
   [key: string]: string | number | boolean | undefined;
