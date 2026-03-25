@@ -277,7 +277,18 @@ const Scanner = () => {
           </div>
 
           <div className="flex-1 overflow-y-auto px-4 pb-4">
-            <IngredientList ingredients={sampleIngredients} onSelect={setSelected} />
+            <IngredientList ingredients={ocrResults ?? sampleIngredients} onSelect={setSelected} />
+
+            {unrecognizedItems.length > 0 && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-3 bg-muted rounded-2xl p-4 border border-border">
+                <p className="font-display font-700 text-foreground text-sm mb-2">🔍 Not recognized ({unrecognizedItems.length})</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {unrecognizedItems.map((item, i) => (
+                    <span key={i} className="text-xs bg-background text-muted-foreground px-2.5 py-1 rounded-full border border-border">{item}</span>
+                  ))}
+                </div>
+              </motion.div>
+            )}
 
             <motion.button
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
