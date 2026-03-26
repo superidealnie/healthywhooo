@@ -25,16 +25,18 @@ const Intro = () => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-lg overflow-hidden relative"
-        style={{ maxHeight: '38vh' }}
+        style={{ maxHeight: '42vh' }}
       >
         <img
           src={heroImg}
-          alt="Friendly characters shopping for food in a supermarket"
-          className="w-full h-full object-cover object-bottom"
-          style={{ marginTop: '-4%' }}
+          alt="Friendly characters shopping for food in a supermarket with a dog and cat"
+          className="w-full h-full object-cover"
+          style={{ objectPosition: 'center 70%' }}
         />
+        {/* Top-only soft gradient for visual balance */}
+        <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/15 to-transparent" />
         {/* Bottom fade into background */}
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-background to-transparent" />
       </motion.div>
 
       {/* Content */}
