@@ -36,11 +36,11 @@ const Intro = () => {
         {/* Top-only soft gradient for visual balance */}
         <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/15 to-transparent" />
         {/* Bottom fade into background */}
-        <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-background to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-background via-background/60 to-transparent" />
       </motion.div>
 
       {/* Content */}
-      <div className="flex flex-col items-center px-5 -mt-2">
+      <div className="flex flex-col items-center px-5 pt-2">
         {/* Title */}
         <motion.h1
           initial={{ opacity: 0, y: 12 }}
