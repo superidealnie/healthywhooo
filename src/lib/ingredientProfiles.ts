@@ -1,3 +1,4 @@
+import profilesCsvRaw from "../../data/ingredient_profiles.csv?raw";
 import type { Ingredient, SafetyLevel, SpeciesMode } from "./ingredients";
 
 export interface IngredientProfile {
@@ -13,9 +14,24 @@ export interface IngredientProfile {
   health_impact_cat: string;
 }
 
-type ProfileModule = {
-  default?: unknown;
-};
+function parseCSVLine(line: string): string[] {
+  const result: string[] = [];
+  let current = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      inQuotes = !inQuotes;
+    } else if (ch === "," && !inQuotes) {
+      result.push(current);
+      current = "";
+    } else {
+      current += ch;
+    }
+  }
+  result.push(current);
+  return result;
+}
 
 let cachedProfileMap: Map<string, IngredientProfile> | null = null;
 
@@ -25,23 +41,33 @@ function getProfileMap(): Map<string, IngredientProfile> {
   cachedProfileMap = new Map<string, IngredientProfile>();
 
   try {
-    const modules = import.meta.glob("../data/ingredient_profiles.json", { eager: true });
-    const profileModule = modules["../data/ingredient_profiles.json"] as ProfileModule | undefined;
-    const profiles = Array.isArray(profileModule?.default) ? profileModule.default : [];
-
-    if (!profiles.length) {
-      console.log("[Profiles] Fallback: profile dataset missing or empty, using ingredient defaults");
+    const lines = profilesCsvRaw.split("\n").filter((l) => l.trim());
+    if (lines.length < 2) {
+      console.log("[Profiles] Fallback: profile CSV empty, using ingredient defaults");
       return cachedProfileMap;
     }
 
-    for (const entry of profiles) {
-      if (!entry || typeof entry !== "object") continue;
-      const profile = entry as IngredientProfile;
-      if (!profile.ingredient_key) continue;
-      cachedProfileMap.set(profile.ingredient_key.toLowerCase(), profile);
+    for (let i = 1; i < lines.length; i++) {
+      const cols = parseCSVLine(lines[i]);
+      const key = cols[0]?.trim().toLowerCase();
+      if (!key) continue;
+      cachedProfileMap.set(key, {
+        ingredient_key: key,
+        what_is_it: cols[1] ?? "",
+        why_used: cols[2] ?? "",
+        fun_fact: cols[3] ?? "",
+        risk_label_human: cols[4] ?? "",
+        health_impact_human: cols[5] ?? "",
+        risk_label_dog: cols[6] ?? "",
+        health_impact_dog: cols[7] ?? "",
+        risk_label_cat: cols[8] ?? "",
+        health_impact_cat: cols[9] ?? "",
+      });
     }
+
+    console.log(`[Profiles] Loaded ${cachedProfileMap.size} profiles from CSV`);
   } catch {
-    console.log("[Profiles] Fallback: could not load profile dataset, using ingredient defaults");
+    console.log("[Profiles] Fallback: could not load profile CSV, using ingredient defaults");
   }
 
   return cachedProfileMap;
