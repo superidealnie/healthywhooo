@@ -1,6 +1,9 @@
-# HealthyWhooo (NutriSight AI)
+# HealthyWhooo 
 
 AI-powered ingredient scanner for transparent and informed food choices.
+
+# Presentation:
+https://canva.link/1pxsesdh60qiel0
 
 ## Overview
 
